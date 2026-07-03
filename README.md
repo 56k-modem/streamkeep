@@ -11,7 +11,7 @@ When a stream goes live, the recording containers wake up and capture it. Once t
 - **Automated Recording:** Captures Kick and Twitch streams to `.mp4`.
 - **Contact Sheets:** Generates thumbnail grids for every recording.
 - **High-Res Posters:** Generates 4K (3840x2160) posters for Jellyfin.
-- **Auto-Renaming:** Moves completed files to a dynamic Season directory with episodic naming: `Wubby Streams - S26E051101 - twitch-abc123de.mp4`.
+- **Auto-Renaming:** Moves completed files to a dynamic Season directory with episodic naming: `Wubby - S26E051101 - twitch-abc123de.mp4`.
 - **Web UI:** Browse contact sheets via a simple web interface.
 
 ## Workflow
@@ -67,12 +67,12 @@ Recordings are organized as a TV show library:
 
 ```
 TV Shows/
-└── Wubby Streams/
+└── Wubby/
     └── Season 26/
-        ├── Wubby Streams - S26E051101 - twitch-ab12cd34.mp4
-        ├── Wubby Streams - S26E051101 - twitch-ab12cd34.jpg   ← poster
-        ├── Wubby Streams - S26E051201 - kick-ef56gh78.mp4
-        └── Wubby Streams - S26E051201 - kick-ef56gh78.jpg
+        ├── Wubby - S26E051101 - twitch-ab12cd34.mp4
+        ├── Wubby - S26E051101 - twitch-ab12cd34.jpg   ← poster
+        ├── Wubby - S26E051201 - kick-ef56gh78.mp4
+        └── Wubby - S26E051201 - kick-ef56gh78.jpg
 ```
 
 Poster images are 4K (3840×2160) so they look sharp at any display size. Episode numbers are derived from the file's modification date (e.g., S26E051101). A two-digit sequence suffix is appended to handle multiple streams on the same day, ensuring correct chronological sorting in Jellyfin. Unique IDs at the end of filenames provide an extra layer of collision protection.
