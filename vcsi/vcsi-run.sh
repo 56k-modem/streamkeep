@@ -4,9 +4,10 @@ set -euo pipefail
 TS_FOLDER="${TS_FOLDER:-/input}"
 JPG_FOLDER="${JPG_FOLDER:-/output}"
 FONT_PATH="${FONT_PATH:-/usr/share/fonts/truetype/Misc-Fixed-7x13.ttf}"
-WUBBY_STREAMS_DIR="$TS_FOLDER/TV Shows/Wubby Streams"
+SHOW_NAME="Wubby"
+SHOW_DIR="$TS_FOLDER/TV Shows/$SHOW_NAME"
 CURRENT_SEASON="Season $(date +%y)"
-SEASON_DIR="$WUBBY_STREAMS_DIR/$CURRENT_SEASON"
+SEASON_DIR="$SHOW_DIR/$CURRENT_SEASON"
 
 RESCAN=false
 STAY_ALIVE=false
@@ -36,7 +37,7 @@ _purge_stale_sheets() {
 
 _purge_stale_sheets "$TS_FOLDER"
 if $RESCAN; then
-    for sdir in "$WUBBY_STREAMS_DIR"/Season*/; do
+    for sdir in "$SHOW_DIR"/Season*/; do
         [ -d "$sdir" ] && _purge_stale_sheets "$sdir"
     done
 fi
@@ -61,7 +62,7 @@ _generate_sheets() {
 
 _generate_sheets "$TS_FOLDER"
 if $RESCAN; then
-    for sdir in "$WUBBY_STREAMS_DIR"/Season*/; do
+    for sdir in "$SHOW_DIR"/Season*/; do
         [ -d "$sdir" ] && _generate_sheets "$sdir"
     done
 fi
@@ -117,7 +118,7 @@ _generate_posters() {
 
 _generate_posters "$TS_FOLDER"
 if $RESCAN; then
-    for sdir in "$WUBBY_STREAMS_DIR"/Season*/; do
+    for sdir in "$SHOW_DIR"/Season*/; do
         [ -d "$sdir" ] && _generate_posters "$sdir"
     done
 fi
@@ -128,7 +129,7 @@ fi
 for jpg_path in "$JPG_FOLDER"/*.jpg; do
     base="${jpg_path##*/}"; base="${base%.jpg}"
     # Also keep sheets whose video was renamed and moved to any Season folder
-    season_match=( "$WUBBY_STREAMS_DIR"/Season*/*"$base" )
+    season_match=( "$SHOW_DIR"/Season*/*"$base" )
     [[ -f "$TS_FOLDER/$base" ]] || [[ -f "${season_match[0]:-}" ]] || { rm -v "$jpg_path"; }
 done
 
@@ -139,7 +140,7 @@ shopt -s nullglob
 for jpg_path in "$TS_FOLDER"/*.jpg; do
     base="$(basename "$jpg_path" .jpg)"
     # Also keep posters whose video was renamed and moved to any Season folder
-    season_match=( "$WUBBY_STREAMS_DIR"/Season*/*"${base}.mp4" )
+    season_match=( "$SHOW_DIR"/Season*/*"${base}.mp4" )
     [[ -f "$TS_FOLDER/$base.mp4" ]] || [[ -f "${season_match[0]:-}" ]] || { echo "[vcsi] removing orphaned poster: $jpg_path"; rm -v "$jpg_path"; }
 done
 
@@ -166,16 +167,16 @@ while IFS= read -r mp4; do
     # and handle streams that cross midnight or are processed in batches.
     fyear=$(date -r "$mp4" +%y)
     fdate=$(date -r "$mp4" +%m%d)
-    fseason_dir="$WUBBY_STREAMS_DIR/Season ${fyear}"
+    fseason_dir="$SHOW_DIR/Season ${fyear}"
     mkdir -p "$fseason_dir"
 
     # Handle multiple streams on the same day by appending a sequence number.
     # This ensures Jellyfin sorts them chronologically even if they share a date.
     # We check the destination folder for existing .mp4 files with the same date tag.
-    count=$(find "$fseason_dir" -maxdepth 1 -name "Wubby Streams - S${fyear}E${fdate}*" -name "*.mp4" | wc -l)
+    count=$(find "$fseason_dir" -maxdepth 1 -name "* - S${fyear}E${fdate}*" -name "*.mp4" | wc -l)
     seq_str=$(printf "%02d" $((count + 1)))
     
-    new_name="Wubby Streams - S${fyear}E${fdate}${seq_str} - ${base}"
+    new_name="${SHOW_NAME} - S${fyear}E${fdate}${seq_str} - ${base}"
 
     mv -- "$mp4" "$fseason_dir/${new_name}.mp4"
     echo "[vcsi] moved ${base}.mp4 -> ${new_name}.mp4"
