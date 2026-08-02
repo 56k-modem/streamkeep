@@ -1,4 +1,27 @@
 #!/bin/bash
+
+apprise_notify() {
+    local TITLE="$1"
+    local BODY="$2"
+    : "${APPRISE_URL:?APPRISE_URL env var required}"
+
+    python3 -c '
+import json
+import os
+import sys
+
+print(json.dumps({
+    "urls": os.environ["APPRISE_URL"],
+    "title": sys.argv[1],
+    "body": sys.argv[2],
+}))
+' "$TITLE" "$BODY" |
+        curl -fsS -m 10 --retry 5 \
+            -H "Content-Type: application/json" \
+            --data-binary @- \
+            "${APPRISE_API_URL:?APPRISE_API_URL env var required}"
+}
+
 echo "*** Container starting"
 RID=$(cat /proc/sys/kernel/random/uuid)
 streamlink --retry-streams 5 --stdout https://kick.com/paymoneywubby best \
@@ -9,6 +32,9 @@ streamlink --retry-streams 5 --stdout https://kick.com/paymoneywubby best \
         touch "/wubby/kick-${RID}.recording"
         curl -fsS -m 10 --retry 5 "https://hc-ping.com/${HC_UUID:?HC_UUID env var required}/start?rid=$RID"
         curl -fsS -m 10 --retry 5 "${HC_LOCAL_PING_URL:?HC_LOCAL_PING_URL env var required}/start?rid=$RID"
+        apprise_notify \
+            "Kick recording started" \
+            "Started recording paymoneywubby on Kick (recording ID: ${RID})."
       fi
     done
   ) \
@@ -30,4 +56,9 @@ for url in \
   "${HC_LOCAL_PING_URL}?rid=$RID"; do
   curl -fsS -m 10 --retry 5 --data-raw "$vodsdata" "$url"
 done
+apprise_notify \
+    "Kick recording finished" \
+    "Finished recording paymoneywubby on Kick (recording ID: ${RID}).
+
+${vodsdata}"
 rm /tmp/vodsdata.tmp

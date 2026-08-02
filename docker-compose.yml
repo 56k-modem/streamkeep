@@ -19,6 +19,8 @@ services:
       - TWITCH_OAUTH
       - HC_UUID
       - HC_LOCAL_PING_URL
+      - APPRISE_API_URL
+      - APPRISE_URL
     volumes:
       - ${VOD_DIR}:/wubby
     restart: unless-stopped
@@ -42,6 +44,8 @@ services:
       - TZ=Europe/Budapest
       - HC_UUID
       - HC_LOCAL_PING_URL
+      - APPRISE_API_URL
+      - APPRISE_URL
     volumes:
       - ${VOD_DIR}:/wubby
     restart: unless-stopped
