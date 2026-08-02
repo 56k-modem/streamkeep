@@ -6,6 +6,7 @@ on:
     paths:
       - Dockerfile
       - streamlinkcmd-*.sh
+      - requirements.txt
   workflow_dispatch:
 
 jobs:
