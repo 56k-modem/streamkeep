@@ -111,6 +111,46 @@ TWITCH_DIR=/path/to/twitch-root
 docker compose up -d
 ```
 
+### Versioning and Releases
+
+Releases use calendar versions in `YYYY.MM.DD` format. Each release publishes the
+same version of all four container images so the stack can be upgraded or rolled
+back as a unit.
+
+By default, Compose uses the moving `latest` image tags. To pin a deployment to a
+release, set `STACK_VERSION` in `.env`:
+
+```env
+STACK_VERSION=2026.08.07
+```
+
+Pull and apply the selected version with:
+
+```bash
+docker compose pull
+docker compose up -d
+```
+
+To upgrade or roll back, change `STACK_VERSION` to another published release and
+run the same two commands. Remove the setting, or set it to `latest`, to resume
+tracking the latest images.
+
+#### Publishing a Release
+
+Only one release can be published per calendar day. From an up-to-date `master`
+branch, create and push an annotated tag:
+
+```bash
+VERSION="$(date +%Y.%m.%d)"
+git tag -a "$VERSION" -m "$VERSION"
+git push origin "$VERSION"
+```
+
+The release workflow validates the tag and Compose configuration, checks the
+shell scripts, builds and publishes every image with both the calendar version
+and `latest` tags, and then creates the GitHub release with generated notes. A
+GitHub release is not created if validation or any image build fails.
+
 ### Manual Operations
 
 Manually trigger contact sheet generation (with full rescan):
