@@ -79,6 +79,7 @@ jobs:
         run: docker compose --env-file .env.example config --quiet
 
   publish-images:
+    name: ${{ matrix.image }}
     needs: [prepare, validate]
     runs-on: ubuntu-latest
     permissions:
