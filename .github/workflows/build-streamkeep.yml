@@ -1,4 +1,4 @@
-name: Build streamlink image
+name: Build Streamkeep recorder image
 
 on:
   push:
@@ -34,7 +34,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/56k-modem/streamlink:latest
+          tags: |
+            ghcr.io/56k-modem/streamkeep:latest
+            ghcr.io/56k-modem/streamlink:latest
           provenance: false
           cache-from: type=gha
           cache-to: type=gha,mode=max

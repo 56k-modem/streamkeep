@@ -1,5 +1,5 @@
 FROM python:3.12-slim
-LABEL org.opencontainers.image.source https://github.com/56k-modem/streamlink
+LABEL org.opencontainers.image.source https://github.com/56k-modem/streamkeep
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core bash && \
     rm -rf /var/lib/apt/lists/*

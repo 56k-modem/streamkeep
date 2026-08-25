@@ -4,7 +4,7 @@ x-streamlink-build: &streamlink-build
 
 services:
   streamlink-twitch:
-    image: ghcr.io/56k-modem/streamlink:${STACK_VERSION:-latest}
+    image: ghcr.io/56k-modem/streamkeep:${STACK_VERSION:-latest}
     build: *streamlink-build
     container_name: streamlink-twitch
     command: ["/bin/bash","./streamlinkcmd-twitch.sh"]
@@ -30,7 +30,7 @@ services:
         max-size: "100m"
         max-file: "5"
   streamlink-kick:
-    image: ghcr.io/56k-modem/streamlink:${STACK_VERSION:-latest}
+    image: ghcr.io/56k-modem/streamkeep:${STACK_VERSION:-latest}
     build: *streamlink-build
     container_name: streamlink-kick
     command: ["/bin/bash","./streamlinkcmd-kick.sh"]
@@ -56,7 +56,7 @@ services:
         max-file: "5"
   streamlink-test:
     profiles: ["testing"]
-    image: ghcr.io/56k-modem/streamlink:${STACK_VERSION:-latest}
+    image: ghcr.io/56k-modem/streamkeep:${STACK_VERSION:-latest}
     build: *streamlink-build
     container_name: streamlink-test
     command: ["/bin/bash","./streamlinkcmd-test.sh"]

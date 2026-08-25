@@ -1,6 +1,6 @@
-# Wubby Stream Archiver
+# Streamkeep
 
-A Docker-based system that automatically records [PaymoneyWubby](https://twitch.tv/paymoneywubby) streams from Twitch and Kick, generates visual contact sheets for browsing, and organizes recordings as a Jellyfin-compatible TV show library.
+A self-hosted livestream recorder and VOD archive. Streamkeep automatically records [PaymoneyWubby](https://twitch.tv/paymoneywubby) streams from Twitch and Kick, generates visual contact sheets for browsing, and organizes recordings as a Jellyfin-compatible TV show library.
 
 ## Overview
 
@@ -164,8 +164,8 @@ Manually trigger contact sheet generation (with full rescan):
 Images are hosted on GitHub Container Registry and rebuilt automatically on push via GitHub Actions. The server only needs `docker-compose.yml`, `.env`, and the mapped data volumes. To build locally:
 
 ```bash
-# Streamlink recorder image
-docker build -t streamlink .
+# Streamkeep recorder image
+docker build -t streamkeep .
 
 # vcsi post-processor image
 docker build -t vcsi ./vcsi
