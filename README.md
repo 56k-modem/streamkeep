@@ -102,7 +102,6 @@ HC_UUID=your-healthchecks-uuid
 HC_LOCAL_PING_URL=http://your-local-healthchecks/ping
 VOD_DIR=/path/to/recordings
 CONTACT_SHEETS_DIR=/path/to/contact-sheets
-TWITCH_DIR=/path/to/twitch-root
 ```
 
 ### Running
