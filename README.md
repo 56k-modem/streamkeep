@@ -1,5 +1,7 @@
 # Streamkeep
 
+[![Build](https://github.com/56k-modem/streamkeep/actions/workflows/build-streamkeep.yml/badge.svg)](https://github.com/56k-modem/streamkeep/actions/workflows/build-streamkeep.yml)
+
 A self-hosted livestream recorder and VOD archive. Streamkeep automatically records [PaymoneyWubby](https://twitch.tv/paymoneywubby) streams from Twitch and Kick, generates visual contact sheets for browsing, and organizes recordings as a Jellyfin-compatible TV show library.
 
 ## Overview
