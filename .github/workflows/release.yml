@@ -147,5 +147,5 @@ jobs:
           gh release create "$VERSION" \
             --repo "$GITHUB_REPOSITORY" \
             --title "$VERSION" \
-            --generate-notes \
+            --notes $'## What\'s changed\n\nAutomated build of the Streamkeep Docker images.' \
             --verify-tag

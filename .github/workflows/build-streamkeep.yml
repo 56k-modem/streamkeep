@@ -1,4 +1,4 @@
-name: Build Streamkeep recorder image
+name: Build
 
 on:
   push:
