@@ -1,4 +1,4 @@
-FROM python:3.14.6-slim-bookworm
+FROM python:3.15.0rc2-slim-bookworm
 LABEL org.opencontainers.image.source=https://github.com/56k-modem/streamkeep
 COPY requirements.txt .
 RUN groupadd -g 1000 csd && useradd -m -u 1000 -g csd csd && \
