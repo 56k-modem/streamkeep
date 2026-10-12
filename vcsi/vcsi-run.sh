@@ -16,6 +16,8 @@ for arg in "$@"; do
     [[ "$arg" == "--stay-alive" ]] && STAY_ALIVE=true
 done
 
+mkdir -p "$JPG_FOLDER/mobile" "$JPG_FOLDER/desktop"
+
 echo "[vcsi] $(date '+%F %T')  pass started"
 
 ###############################################################################
@@ -24,14 +26,17 @@ echo "[vcsi] $(date '+%F %T')  pass started"
 ###############################################################################
 _purge_stale_sheets() {
     local dir="$1"
+    local vid_path base jpg_path sheet_dir
     shopt -s nullglob
     for vid_path in "$dir"/*.mp4; do
         base="$(basename "$vid_path")"
-        jpg_path="$JPG_FOLDER/$base.jpg"
-        if [ -f "$jpg_path" ] && [ "$vid_path" -nt "$jpg_path" ]; then
-            echo "[vcsi] deleting stale sheet for $base.jpg (video newer)"
-            rm -v "$jpg_path"
-        fi
+        for sheet_dir in "$JPG_FOLDER/mobile" "$JPG_FOLDER/desktop"; do
+            jpg_path="$sheet_dir/$base.jpg"
+            if [ -f "$jpg_path" ] && [ "$vid_path" -nt "$jpg_path" ]; then
+                echo "[vcsi] deleting stale sheet $jpg_path (video newer)"
+                rm -v -- "$jpg_path"
+            fi
+        done
     done
 }
 
@@ -47,17 +52,27 @@ fi
 ###############################################################################
 _generate_sheets() {
     local dir="$1"
-    vcsi "$dir" --no-overwrite \
-         -t -T sw -w 900 -g 3x5 \
-         --background-color 000000 \
-         --metadata-font "$FONT_PATH" \
-         --metadata-font-color ffffff \
-         --metadata-font-size 12 \
-         --timestamp-font "$FONT_PATH" \
-         --timestamp-format "{H}:{M}:{S}" \
-         --ignore-errors \
-         --exclude-extensions jpg \
-         -o "$JPG_FOLDER"
+    local variant width grid
+    for variant in mobile desktop; do
+        if [ "$variant" = mobile ]; then
+            width=1500
+            grid=3x7
+        else
+            width=1800
+            grid=5x6
+        fi
+        vcsi "$dir" --no-overwrite \
+             -t -T sw -w "$width" -g "$grid" \
+             --background-color 000000 \
+             --metadata-font "$FONT_PATH" \
+             --metadata-font-color ffffff \
+             --metadata-font-size 12 \
+             --timestamp-font "$FONT_PATH" \
+             --timestamp-format "{H}:{M}:{S}" \
+             --ignore-errors \
+             --exclude-extensions jpg \
+             -o "$JPG_FOLDER/$variant"
+    done
 }
 
 _generate_sheets "$TS_FOLDER"
@@ -126,11 +141,11 @@ fi
 ###############################################################################
 # Step 2 – prune orphaned JPEGs (videos deleted or moved)
 ###############################################################################
-for jpg_path in "$JPG_FOLDER"/*.jpg; do
+for jpg_path in "$JPG_FOLDER/mobile"/*.jpg "$JPG_FOLDER/desktop"/*.jpg; do
     base="${jpg_path##*/}"; base="${base%.jpg}"
-    # Also keep sheets whose video was renamed and moved to any Season folder
-    season_match=( "$SHOW_DIR"/Season*/*"$base" )
-    [[ -f "$TS_FOLDER/$base" ]] || [[ -f "${season_match[0]:-}" ]] || { rm -v "$jpg_path"; }
+    # Match the exact filename in any Season folder, including historical VODs.
+    season_match=( "$SHOW_DIR"/Season*/"$base" )
+    [[ -f "$TS_FOLDER/$base" ]] || [[ -f "${season_match[0]:-}" ]] || { rm -v -- "$jpg_path"; }
 done
 
 ###############################################################################
@@ -154,7 +169,7 @@ echo "[vcsi] $(date '+%F %T') moving completed VODs to Season folders..."
 
 # Move each completed mp4 (and its .jpg poster) from the input root to its respective Season DIR,
 # sorted by modification time so multiple new VODs are numbered chronologically.
-while IFS= read -r mp4; do
+while IFS= read -r -d '' mp4; do
     [ -f "$mp4" ] || continue
     base=$(basename "$mp4" .mp4)
     # Skip if the recording sentinel still exists (stream still in progress)
@@ -185,12 +200,14 @@ while IFS= read -r mp4; do
         mv -- "$jpg" "$fseason_dir/${new_name}.jpg"
         echo "[vcsi] moved ${base}.jpg -> ${new_name}.jpg"
     fi
-    sheet="$JPG_FOLDER/${base}.mp4.jpg"
-    if [ -f "$sheet" ]; then
-        mv -- "$sheet" "$JPG_FOLDER/${new_name}.mp4.jpg"
-        echo "[vcsi] renamed sheet ${base}.mp4.jpg -> ${new_name}.mp4.jpg"
-    fi
-done < <(find "$TS_FOLDER" -maxdepth 1 -name "*.mp4" -printf '%T@ %p\n' | sort -n | sed 's/^[^ ]* //')
+    for sheet_dir in "$JPG_FOLDER/mobile" "$JPG_FOLDER/desktop"; do
+        sheet="$sheet_dir/${base}.mp4.jpg"
+        if [ -f "$sheet" ]; then
+            mv -- "$sheet" "$sheet_dir/${new_name}.mp4.jpg"
+            echo "[vcsi] renamed sheet $sheet -> $sheet_dir/${new_name}.mp4.jpg"
+        fi
+    done
+done < <(find "$TS_FOLDER" -maxdepth 1 -name "*.mp4" -printf '%T@ %p\0' | sort -zn | cut -z -d ' ' -f 2-)
 
 echo "[vcsi] $(date '+%F %T') VOD move finished"
 
