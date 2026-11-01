@@ -9,7 +9,7 @@ services:
     container_name: streamlink-twitch
     command: ["/bin/bash","./streamlinkcmd-twitch.sh"]
     healthcheck:
-      test: ["CMD-SHELL", "ps aux | grep '/usr/local/bin/python3.14 /usr/local/bin/streamlink' | grep -v grep > /dev/null || exit 1"]
+      test: ["CMD-SHELL", "ps aux | grep '/usr/local/bin/python3.15 /usr/local/bin/streamlink' | grep -v grep > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -35,7 +35,7 @@ services:
     container_name: streamlink-kick
     command: ["/bin/bash","./streamlinkcmd-kick.sh"]
     healthcheck:
-      test: ["CMD-SHELL", "ps aux | grep '/usr/local/bin/python3.14 /usr/local/bin/streamlink' | grep -v grep > /dev/null || exit 1"]
+      test: ["CMD-SHELL", "ps aux | grep '/usr/local/bin/python3.15 /usr/local/bin/streamlink' | grep -v grep > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
