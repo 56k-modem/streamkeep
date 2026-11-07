@@ -1,8 +1,7 @@
 FROM python:3.15.2-slim-trixie
 LABEL org.opencontainers.image.source=https://github.com/56k-modem/streamkeep
 COPY requirements.txt .
-RUN groupadd -g 1000 csd && useradd -m -u 1000 -g csd csd && \
-    apt-get update && apt-get install -y --no-install-recommends procps curl git python3-pip xz-utils \
+RUN apt-get update && apt-get install -y --no-install-recommends procps curl git python3-pip xz-utils \
     && TARBALL="ffmpeg-master-latest-linux64-gpl.tar.xz" \
     && TMP_DIR=$(mktemp -d) \
     && curl -sS -L -o "${TMP_DIR}/${TARBALL}" "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${TARBALL}" \
@@ -18,6 +17,6 @@ RUN groupadd -g 1000 csd && useradd -m -u 1000 -g csd csd && \
 ENV TZ=Europe/Budapest
 WORKDIR /script
 COPY streamlinkcmd-twitch.sh streamlinkcmd-kick.sh streamlinkcmd-test.sh ./
-RUN chown csd:csd streamlinkcmd-twitch.sh streamlinkcmd-kick.sh streamlinkcmd-test.sh && \
-    chmod +x streamlinkcmd-twitch.sh streamlinkcmd-kick.sh streamlinkcmd-test.sh
-USER csd
+RUN chmod 755 streamlinkcmd-twitch.sh streamlinkcmd-kick.sh streamlinkcmd-test.sh
+ENV HOME=/tmp
+USER nobody:nogroup
