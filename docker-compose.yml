@@ -14,6 +14,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    user: "${PUID:?Set PUID in .env}:${PGID:?Set PGID in .env}"
     environment:
       - TZ=Europe/Budapest
       - TWITCH_OAUTH
@@ -40,6 +41,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    user: "${PUID:?Set PUID in .env}:${PGID:?Set PGID in .env}"
     environment:
       - TZ=Europe/Budapest
       - HC_UUID
@@ -62,6 +64,7 @@ services:
     command: ["/bin/bash","./streamlinkcmd-test.sh"]
     stdin_open: true
     tty: true
+    user: "${PUID:?Set PUID in .env}:${PGID:?Set PGID in .env}"
     environment:
       - TZ=Europe/Budapest
       - TWITCH_OAUTH
@@ -100,7 +103,7 @@ services:
     command: ["--stay-alive"]
     environment:
       - TZ=Europe/Budapest
-    user: "1000:1000"
+    user: "${PUID:?Set PUID in .env}:${PGID:?Set PGID in .env}"
     volumes:
       - ${VOD_DIR}:/input
       - ${CONTACT_SHEETS_DIR}:/output
