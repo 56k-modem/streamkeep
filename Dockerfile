@@ -4,7 +4,15 @@ COPY requirements.txt .
 RUN apt-get update && apt-get install -y --no-install-recommends procps curl git python3-pip xz-utils \
     && TARBALL="ffmpeg-master-latest-linux64-gpl.tar.xz" \
     && TMP_DIR=$(mktemp -d) \
-    && curl -sS -L -o "${TMP_DIR}/${TARBALL}" "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${TARBALL}" \
+    && curl -fSL \
+        --retry 5 \
+        --retry-all-errors \
+        --retry-delay 5 \
+        --connect-timeout 30 \
+        -w 'FFmpeg download: HTTP %{http_code}, bytes %{size_download}\n' \
+        -o "${TMP_DIR}/${TARBALL}" \
+        "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/${TARBALL}" \
+    && tar -tJf "${TMP_DIR}/${TARBALL}" > /dev/null \
     && tar -xf "${TMP_DIR}/${TARBALL}" -C "$TMP_DIR" \
     && EXTRACTED_DIR=$(find "$TMP_DIR" -maxdepth 1 -mindepth 1 -type d | head -1) \
     && install -m 755 "${EXTRACTED_DIR}/bin/ffmpeg" /usr/local/bin/ffmpeg \
