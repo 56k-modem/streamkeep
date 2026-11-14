@@ -1,4 +1,4 @@
-FROM python:3.15.2-slim-trixie
+FROM python:3.16.0a1-slim-trixie
 LABEL org.opencontainers.image.source=https://github.com/56k-modem/streamkeep
 COPY requirements.txt .
 RUN apt-get update && apt-get install -y --no-install-recommends procps curl git python3-pip xz-utils \
