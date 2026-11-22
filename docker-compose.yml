@@ -18,10 +18,8 @@ services:
     environment:
       - TZ=Europe/Budapest
       - TWITCH_OAUTH
-      - HC_UUID
-      - HC_LOCAL_PING_URL
-      - APPRISE_API_URL
-      - APPRISE_URL
+      - GOTIFY_URL
+      - GOTIFY_APP_TOKEN
     volumes:
       - ${VOD_DIR}:/wubby
     restart: unless-stopped
@@ -44,10 +42,8 @@ services:
     user: "${PUID:?Set PUID in .env}:${PGID:?Set PGID in .env}"
     environment:
       - TZ=Europe/Budapest
-      - HC_UUID
-      - HC_LOCAL_PING_URL
-      - APPRISE_API_URL
-      - APPRISE_URL
+      - GOTIFY_URL
+      - GOTIFY_APP_TOKEN
     volumes:
       - ${VOD_DIR}:/wubby
     restart: unless-stopped
