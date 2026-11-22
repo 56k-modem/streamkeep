@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends procps curl git
     mkdir /wubby && mkdir /test
 ENV TZ=Europe/Budapest
 WORKDIR /script
-COPY streamlinkcmd-twitch.sh streamlinkcmd-kick.sh streamlinkcmd-test.sh ./
+COPY streamlinkcmd-twitch.sh streamlinkcmd-kick.sh streamlinkcmd-test.sh gotify-notify.sh ./
 RUN chmod 755 streamlinkcmd-twitch.sh streamlinkcmd-kick.sh streamlinkcmd-test.sh
 ENV HOME=/tmp
 USER nobody:nogroup

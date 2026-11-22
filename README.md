@@ -101,7 +101,7 @@ Poster images are 4K (3840×2160) so they look sharp at any display size. Episod
 
 - Docker and Docker Compose
 - A Twitch OAuth token (for authenticated stream access)
-- Healthchecks.io account (optional, for uptime monitoring)
+- A Gotify application token (optional, for recording notifications)
 
 ### Configuration
 
@@ -109,8 +109,8 @@ Copy `.env.example` to `.env` and fill in the values:
 
 ```env
 TWITCH_OAUTH=oauth:your_token_here
-HC_UUID=your-healthchecks-uuid
-HC_LOCAL_PING_URL=http://your-local-healthchecks/ping
+GOTIFY_URL=http://192.168.88.7:8477/message
+GOTIFY_APP_TOKEN=your-gotify-application-token
 VOD_DIR=/path/to/recordings
 CONTACT_SHEETS_DIR=/path/to/contact-sheets
 ```
@@ -187,9 +187,15 @@ docker build -t contact-sheets ./caddy
 docker build -t postproc-trigger ./postproc-trigger
 ```
 
-## Health Monitoring
+## Recording Notifications
 
-Each recording container pings [Healthchecks.io](https://healthchecks.io) when a stream starts and again when it ends (with the recorded duration). This makes it easy to get alerted if recordings silently stop working.
+Create a `Streamkeep` application in Gotify and set its application token as
+`GOTIFY_APP_TOKEN` in the server's `.env`. Set `GOTIFY_URL` to the full
+`/message` endpoint reachable from both recorder containers. Leave both settings
+empty to disable notifications.
+
+Streamkeep sends a message when Twitch or Kick capture opens and another after
+the VOD is finalized. Delivery failures are logged and recording continues.
 
 ## Project Structure
 
